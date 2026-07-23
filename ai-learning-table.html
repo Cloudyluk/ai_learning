@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI学习路线 - 多维表格</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===== 亮色主题（默认） ===== */
+:root {
+  --bg: #f0f2f5;
+  --card: #ffffff;
+  --text: #1a1a2e;
+  --text-dim: #666666;
+  --text-heading: #1a1a2e;
+  --border-light: #e8e8e8;
+  --border-lighter: #f0f0f0;
+  --thead-bg: #f8f9fa;
+  --hover-row: #fafbff;
+  --tab-bg: #ffffff;
+  --tab-color: #666666;
+  --tab-hover-bg: #f8f9fa;
+  --tab-hover-color: #333333;
+  --select-bg: #ffffff;
+  --select-border: #dddddd;
+  --select-color: #333333;
+  --source-filter-bg: #f8f9fa;
+  --tool-badge-bg: #f8f9fa;
+  --tool-badge-border: #e8e8e8;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --stat-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  --tab-active-shadow: 0 4px 12px rgba(102,126,234,0.4);
+  --tab-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  --code-bg: #f0f2f5;
+  --scrollbar-track: #f0f2f5;
+  --scrollbar-thumb: #c4c9e2;
+}
+
+/* ===== 暗色主题 ===== */
+[data-theme="dark"] {
+  --bg: #0f0f1a;
+  --card: #1a1a2e;
+  --text: #e0e0e0;
+  --text-dim: #8888aa;
+  --text-heading: #f0f0f0;
+  --border-light: #2a2a4a;
+  --border-lighter: #222238;
+  --thead-bg: #16162a;
+  --hover-row: #1e1e38;
+  --tab-bg: #1a1a2e;
+  --tab-color: #8888aa;
+  --tab-hover-bg: #22223a;
+  --tab-hover-color: #ccccdd;
+  --select-bg: #1a1a2e;
+  --select-border: #3a3a5a;
+  --select-color: #e0e0e0;
+  --source-filter-bg: #16162a;
+  --tool-badge-bg: #22223a;
+  --tool-badge-border: #3a3a5a;
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --stat-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  --tab-active-shadow: 0 4px 16px rgba(102,126,234,0.3);
+  --tab-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  --code-bg: #22223a;
+  --scrollbar-track: #1a1a2e;
+  --scrollbar-thumb: #3a3a5a;
+}
+
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; transition: background 0.3s ease, color 0.3s ease; }
+body * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+
+/* 主题切换按钮 */
+.theme-toggle {
+  position: fixed; top: 16px; right: 16px; z-index: 9999;
+  width: 44px; height: 44px; border-radius: 12px;
+  border: 1.5px solid var(--border-light); background: var(--card); color: var(--text);
+  font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--card-shadow); transition: all 0.3s ease;
+}
+.theme-toggle:hover { border-color: #667eea; box-shadow: var(--tab-active-shadow); transform: scale(1.08); }
+.theme-toggle:active { transform: scale(0.95); }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+h1 { text-align: center; font-size: 28px; margin-bottom: 8px; color: var(--text-heading); }
+.subtitle { text-align: center; color: var(--text-dim); margin-bottom: 32px; font-size: 14px; }
+
+/* Tab Navigation */
+.tab-nav { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s; background: var(--tab-bg); color: var(--tab-color); box-shadow: var(--tab-shadow); min-height: 44px; }
+.tab-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; box-shadow: var(--tab-active-shadow); }
+.tab-btn:hover:not(.active) { background: var(--tab-hover-bg); color: var(--tab-hover-color); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Card */
+.card { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: var(--card-shadow); overflow: hidden; }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--text-heading); display: flex; align-items: center; gap: 8px; }
+.card-title .icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+/* Table */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 600px; }
+thead { background: var(--thead-bg); }
+th { padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-dim); border-bottom: 2px solid var(--border-light); white-space: nowrap; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border-lighter); }
+tr:hover td { background: var(--hover-row); }
+
+/* Tags */
+.tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.tag-math { background: #fff3e0; color: #e65100; }
+.tag-ml { background: #e8f5e9; color: #2e7d32; }
+.tag-dl { background: #e3f2fd; color: #1565c0; }
+.tag-nlp { background: #f3e5f5; color: #7b1fa2; }
+.tag-eng { background: #fce4ec; color: #c62828; }
+.tag-agent { background: #e0f7fa; color: #00695c; }
+.tag-finetune { background: #fff8e1; color: #f57f17; }
+.tag-multimodal { background: #e8eaf6; color: #283593; }
+[data-theme="dark"] .tag-math { background: rgba(230,81,0,0.18); }
+[data-theme="dark"] .tag-ml { background: rgba(46,125,50,0.18); }
+[data-theme="dark"] .tag-dl { background: rgba(21,101,192,0.18); }
+[data-theme="dark"] .tag-nlp { background: rgba(123,47,162,0.18); }
+[data-theme="dark"] .tag-eng { background: rgba(198,40,40,0.18); }
+[data-theme="dark"] .tag-agent { background: rgba(0,105,92,0.18); }
+[data-theme="dark"] .tag-finetune { background: rgba(245,127,23,0.18); }
+[data-theme="dark"] .tag-multimodal { background: rgba(40,53,147,0.18); }
+
+/* Difficulty & Priority */
+.diff-easy { color: #4caf50; }
+.diff-medium { color: #ff9800; }
+.diff-hard { color: #f44336; }
+.priority-high { background: #ffebee; color: #c62828; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+[data-theme="dark"] .priority-high { background: rgba(198,40,40,0.15); }
+.priority-mid { background: #fff8e1; color: #f57f17; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+[data-theme="dark"] .priority-mid { background: rgba(245,127,23,0.15); }
+.priority-low { background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+[data-theme="dark"] .priority-low { background: rgba(46,125,50,0.15); }
+
+/* Knowledge Points */
+.kp-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.kp-item { background: var(--code-bg); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: var(--text-dim); }
+
+/* Tool Badges */
+.tool-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--tool-badge-bg); padding: 4px 12px; border-radius: 16px; font-size: 13px; margin: 4px; border: 1px solid var(--tool-badge-border); }
+.tool-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-python { background: #3776ab; }
+.dot-numpy { background: #013243; }
+.dot-pandas { background: #150453; }
+.dot-pytorch { background: #ee4c2c; }
+.dot-hf { background: #ffbd45; }
+.dot-langchain { background: #1c3c3c; }
+.dot-unsloth { background: #ff6b35; }
+.dot-vllm { background: #2563eb; }
+.dot-ollama { background: #000; }
+[data-theme="dark"] .dot-ollama { background: #aaa; }
+.dot-dify { background: #2563eb; }
+.dot-crewai { background: #e91e63; }
+.dot-docker { background: #2496ed; }
+.dot-neo4j { background: #008cc1; }
+.dot-comfyui { background: #7b2ff7; }
+
+/* Filter Bar */
+.filter-bar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.filter-bar label { font-size: 13px; color: var(--text-dim); }
+.filter-bar select { padding: 8px 14px; border: 1px solid var(--select-border); border-radius: 6px; font-size: 13px; min-height: 44px; background: var(--select-bg); cursor: pointer; color: var(--select-color); }
+
+/* Source Filter - Resource Tab */
+.source-filter { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; padding: 16px; background: var(--source-filter-bg); border-radius: 10px; }
+.source-filter label { font-size: 14px; color: var(--text); font-weight: 600; }
+.source-filter select { padding: 8px 16px; border: 2px solid #667eea; border-radius: 8px; font-size: 14px; min-height: 44px; background: var(--select-bg); cursor: pointer; color: var(--select-color); font-weight: 500; }
+.source-filter .source-count { font-size: 12px; color: var(--text-dim); margin-left: 8px; }
+
+/* Source Badge */
+.source-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 4px; }
+.source-bilibili { background: #e3f2fd; color: #1565c0; }
+.source-youtube { background: #ffebee; color: #c62828; }
+.source-mooc { background: #e8f5e9; color: #2e7d32; }
+[data-theme="dark"] .source-bilibili { background: rgba(21,101,192,0.15); }
+[data-theme="dark"] .source-youtube { background: rgba(198,40,40,0.15); }
+[data-theme="dark"] .source-mooc { background: rgba(46,125,50,0.15); }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--card); border-radius: 10px; padding: 16px; text-align: center; box-shadow: var(--stat-shadow); }
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* Code */
+code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--text); }
+
+/* Scrollbar */
+.table-wrap::-webkit-scrollbar { height: 6px; }
+.table-wrap::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 3px; }
+.table-wrap::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .stats-row { grid-template-columns: repeat(3, 1fr); }
+  .container { padding: 16px; }
+}
+@media (max-width: 768px) {
+  h1 { font-size: 22px; }
+  .subtitle { font-size: 12px; margin-bottom: 20px; }
+  .tab-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; gap: 6px; }
+  .tab-btn { flex-shrink: 0; padding: 8px 14px; font-size: 13px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-num { font-size: 22px; }
+  .card { padding: 16px; }
+  .card-title { font-size: 16px; }
+  table { font-size: 13px; }
+  th, td { padding: 10px 12px; }
+  .source-filter { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .source-filter select { width: 100%; }
+}
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 12px; }
+  .stat-num { font-size: 20px; }
+  .stat-label { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" title="切换主题">🌙</button>
+<div class="container">
+<h1>📊 AI 学习路线 · 多维表格</h1>
+<p class="subtitle">9 大阶段 · 65+ 核心知识点 · 40+ 推荐资源（B站+YouTube+海外） · 统一技术栈 · 2026版</p>
+
+<div class="stats-row">
+<div class="stat-card"><div class="stat-num" style="color:#667eea">9</div><div class="stat-label">学习阶段</div></div>
+<div class="stat-card"><div class="stat-num" style="color:#e65100">65+</div><div class="stat-label">核心知识点</div></div>
+<div class="stat-card"><div class="stat-num" style="color:#2e7d32">40+</div><div class="stat-label">推荐资源</div></div>
+<div class="stat-card"><div class="stat-num" style="color:#c62828">9</div><div class="stat-label">阶段项目</div></div>
+<div class="stat-card"><div class="stat-num" style="color:#7b1fa2">36-54</div><div class="stat-label">预计周数</div></div>
+</div>
+
+<div class="tab-nav">
+<button class="tab-btn active" onclick="switchTab('overview')">🗺️ 阶段总览</button>
+<button class="tab-btn" onclick="switchTab('knowledge')">📚 知识点明细</button>
+<button class="tab-btn" onclick="switchTab('resources')">🎬 学习资源</button>
+<button class="tab-btn" onclick="switchTab('tools')">🛠️ 技术栈</button>
+<button class="tab-btn" onclick="switchTab('projects')">🎯 阶段项目</button>
+<button class="tab-btn" onclick="switchTab('timeline')">📅 时间规划</button>
+</div>
+
+<!-- ========== Tab 1: 阶段总览 ========== -->
+<div id="overview" class="tab-content active">
+<div class="card">
+<div class="card-title"><div class="icon" style="background:#667eea20">🗺️</div>九大学习阶段总览</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>阶段</th><th>主题</th><th>难度</th><th>核心目标</th><th>预计周期</th><th>优先级</th><th>前置依赖</th></tr></thead>
+<tbody>
+<tr><td><strong>一</strong></td><td><span class="tag tag-math">数学基础</span></td><td class="diff-medium">⭐⭐⭐</td><td>看懂模型权重、梯度推导、向量检索底层逻辑</td><td>4-6周</td><td><span class="priority-high">必学</span></td><td>无</td></tr>
+<tr><td><strong>二</strong></td><td><span class="tag tag-ml">机器学习基础</span></td><td class="diff-medium">⭐⭐⭐</td><td>理解拟合、优化、泛化三大核心问题</td><td>4-6周</td><td><span class="priority-high">必学</span></td><td>阶段一</td></tr>
+<tr><td><strong>三</strong></td><td><span class="tag tag-dl">神经网络入门</span></td><td class="diff-medium">⭐⭐⭐</td><td>从零搭建MLP，手写反向传播</td><td>3-4周</td><td><span class="priority-high">必学</span></td><td>阶段一、二</td></tr>
+<tr><td><strong>四</strong></td><td><span class="tag tag-dl">深度学习进阶</span></td><td class="diff-hard">⭐⭐⭐⭐</td><td>图像分类CNN、文本时序预测LSTM</td><td>4-6周</td><td><span class="priority-high">必学</span></td><td>阶段三</td></tr>
+<tr><td><strong>五</strong></td><td><span class="tag tag-nlp">Transformer & 预训练</span></td><td class="diff-hard">⭐⭐⭐⭐⭐</td><td>精读论文，微调BERT/GPT</td><td>4-6周</td><td><span class="priority-high">必学</span></td><td>阶段四</td></tr>
+<tr><td><strong>六</strong></td><td><span class="tag tag-eng">大模型工程扩展</span></td><td class="diff-medium">⭐⭐⭐</td><td>RAG/GraphRAG/Function Calling/Prompt/低代码平台</td><td>4-6周</td><td><span class="priority-mid">重要</span></td><td>阶段五</td></tr>
+<tr><td><strong>七</strong></td><td><span class="tag tag-agent">Agent智能体</span></td><td class="diff-hard">⭐⭐⭐⭐</td><td>LangGraph有状态工作流、多Agent协作系统</td><td>4-6周</td><td><span class="priority-mid">重要</span></td><td>阶段五、六</td></tr>
+<tr><td><strong>八</strong></td><td><span class="tag tag-finetune">微调与部署</span></td><td class="diff-hard">⭐⭐⭐⭐</td><td>LoRA微调、量化部署、对齐技术、API服务化</td><td>4-6周</td><td><span class="priority-mid">重要</span></td><td>阶段五</td></tr>
+<tr><td><strong>九</strong></td><td><span class="tag tag-multimodal">多模态大模型</span></td><td class="diff-hard">⭐⭐⭐⭐</td><td>视觉理解、图文生成、视频生成基础</td><td>4-6周</td><td><span class="priority-low">进阶</span></td><td>阶段五</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ========== Tab 2: 知识点明细 ========== -->
+<div id="knowledge" class="tab-content">
+<div class="card">
+<div class="card-title"><div class="icon" style="background:#e6510020">📚</div>全阶段知识点明细</div>
+<div class="filter-bar">
+<label>筛选阶段：</label>
+<select id="stageFilter" onchange="filterKnowledge()">
+<option value="all">全部阶段</option>
+<option value="s1">阶段一：数学基础</option>
+<option value="s2">阶段二：机器学习</option>
+<option value="s3">阶段三：神经网络</option>
+<option value="s4">阶段四：深度学习进阶</option>
+<option value="s5">阶段五：Transformer</option>
+<option value="s6">阶段六：工程扩展</option>
+<option value="s7">阶段七：Agent</option>
+<option value="s8">阶段八：微调部署</option>
+<option value="s9">阶段九：多模态</option>
+</select>
+</div>
+<div class="table-wrap">
+<table id="knowledgeTable">
+<thead><tr><th>阶段</th><th>模块</th><th>核心知识点</th><th>重要程度</th><th>学习类型</th></tr></thead>
+<tbody>
+<!-- 阶段一：数学基础 -->
+<tr data-stage="s1"><td><span class="tag tag-math">数学</span></td><td>线性代数</td><td><div class="kp-list"><span class="kp-item">向量运算</span><span class="kp-item">内积</span><span class="kp-item">余弦相似度</span><span class="kp-item">线性无关</span><span class="kp-item">特征向量</span><span class="kp-item">矩阵乘法</span><span class="kp-item">转置</span><span class="kp-item">逆矩阵</span><span class="kp-item">秩</span><span class="kp-item">特征值</span><span class="kp-item">SVD分解</span><span class="kp-item">L1/L2范数</span><span class="kp-item">F范数</span></div></td><td><span class="priority-high">核心</span></td><td>理论推导</td></tr>
+<tr data-stage="s1"><td><span class="tag tag-math">数学</span></td><td>微积分</td><td><div class="kp-list"><span class="kp-item">多元偏导</span><span class="kp-item">链式法则</span><span class="kp-item">梯度</span><span class="kp-item">极值</span><span class="kp-item">泰勒展开</span></div></td><td><span class="priority-high">核心</span></td><td>理论推导</td></tr>
+<tr data-stage="s1"><td><span class="tag tag-math">数学</span></td><td>概率论</td><td><div class="kp-list"><span class="kp-item">期望/方差</span><span class="kp-item">最大似然估计</span><span class="kp-item">正态分布</span><span class="kp-item">伯努利分布</span><span class="kp-item">二项分布</span><span class="kp-item">条件概率</span><span class="kp-item">贝叶斯公式</span></div></td><td><span class="priority-high">核心</span></td><td>理论推导</td></tr>
+<!-- 阶段二：机器学习 -->
+<tr data-stage="s2"><td><span class="tag tag-ml">ML</span></td><td>核心模型</td><td><div class="kp-list"><span class="kp-item">线性回归</span><span class="kp-item">逻辑回归</span><span class="kp-item">SVM</span><span class="kp-item">决策树</span><span class="kp-item">随机森林</span><span class="kp-item">XGBoost</span></div></td><td><span class="priority-high">核心</span></td><td>理论+实操</td></tr>
+<tr data-stage="s2"><td><span class="tag tag-ml">ML</span></td><td>损失函数</td><td><div class="kp-list"><span class="kp-item">MSE</span><span class="kp-item">交叉熵</span><span class="kp-item">Hinge损失</span></div></td><td><span class="priority-high">核心</span></td><td>理论推导</td></tr>
+<tr data-stage="s2"><td><span class="tag tag-ml">ML</span></td><td>优化算法</td><td><div class="kp-list"><span class="kp-item">SGD</span><span class="kp-item">批量梯度下降</span><span class="kp-item">L1正则化</span><span class="kp-item">L2正则化</span></div></td><td><span class="priority-high">核心</span></td><td>理论+实操</td></tr>
+<tr data-stage="s2"><td><span class="tag tag-ml">ML</span></td><td>基础工程</td><td><div class="kp-list"><span class="kp-item">数据集划分</span><span class="kp-item">准确率</span><span class="kp-item">MSE评估</span><span class="kp-item">召回率</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<!-- 阶段三：神经网络 -->
+<tr data-stage="s3"><td><span class="tag tag-dl">DL</span></td><td>MLP</td><td><div class="kp-list"><span class="kp-item">全连接层结构</span><span class="kp-item">前向传播</span></div></td><td><span class="priority-high">核心</span></td><td>理论+实操</td></tr>
+<tr data-stage="s3"><td><span class="tag tag-dl">DL</span></td><td>反向传播</td><td><div class="kp-list"><span class="kp-item">链式法则推导</span><span class="kp-item">权重更新</span></div></td><td><span class="priority-high">核心</span></td><td>理论推导</td></tr>
+<tr data-stage="s3"><td><span class="tag tag-dl">DL</span></td><td>激活函数</td><td><div class="kp-list"><span class="kp-item">Sigmoid</span><span class="kp-item">Tanh</span><span class="kp-item">ReLU</span><span class="kp-item">LeakyReLU</span><span class="kp-item">GELU</span></div></td><td><span class="priority-mid">重要</span></td><td>理论+对比</td></tr>
+<tr data-stage="s3"><td><span class="tag tag-dl">DL</span></td><td>过拟合对策</td><td><div class="kp-list"><span class="kp-item">Dropout</span><span class="kp-item">Early Stop</span><span class="kp-item">权重衰减</span><span class="kp-item">数据增强</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<!-- 阶段四：深度学习进阶 -->
+<tr data-stage="s4"><td><span class="tag tag-dl">DL</span></td><td>CNN</td><td><div class="kp-list"><span class="kp-item">卷积</span><span class="kp-item">池化</span><span class="kp-item">Padding</span><span class="kp-item">ResNet</span></div></td><td><span class="priority-high">核心</span></td><td>理论+实操</td></tr>
+<tr data-stage="s4"><td><span class="tag tag-dl">DL</span></td><td>RNN/LSTM/GRU</td><td><div class="kp-list"><span class="kp-item">时序建模</span><span class="kp-item">梯度消失</span><span class="kp-item">门控机制</span></div></td><td><span class="priority-mid">重要</span></td><td>理论+实操</td></tr>
+<tr data-stage="s4"><td><span class="tag tag-dl">DL</span></td><td>注意力机制</td><td><div class="kp-list"><span class="kp-item">自注意力</span><span class="kp-item">多头注意力</span></div></td><td><span class="priority-high">核心</span></td><td>理论推导</td></tr>
+<!-- 阶段五：Transformer -->
+<tr data-stage="s5"><td><span class="tag tag-nlp">NLP</span></td><td>Transformer</td><td><div class="kp-list"><span class="kp-item">Encoder</span><span class="kp-item">Decoder</span><span class="kp-item">位置编码</span><span class="kp-item">多头自注意力</span><span class="kp-item">论文精读</span></div></td><td><span class="priority-high">核心</span></td><td>理论+论文</td></tr>
+<tr data-stage="s5"><td><span class="tag tag-nlp">NLP</span></td><td>HuggingFace</td><td><div class="kp-list"><span class="kp-item">Transformers</span><span class="kp-item">Datasets</span><span class="kp-item">Evaluate</span><span class="kp-item">Accelerate</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s5"><td><span class="tag tag-nlp">NLP</span></td><td>预训练模型</td><td><div class="kp-list"><span class="kp-item">BERT加载</span><span class="kp-item">GPT加载</span><span class="kp-item">模型微调</span><span class="kp-item">文本生成</span><span class="kp-item">分类任务</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<!-- 阶段六：工程扩展 -->
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>MoE</td><td><div class="kp-list"><span class="kp-item">稀疏激活</span><span class="kp-item">高效扩容</span></div></td><td><span class="priority-mid">重要</span></td><td>理论</td></tr>
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>RAG</td><td><div class="kp-list"><span class="kp-item">文档切片</span><span class="kp-item">文本向量化</span><span class="kp-item">向量检索</span><span class="kp-item">LLM生成</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>向量数据库</td><td><div class="kp-list"><span class="kp-item">FAISS</span><span class="kp-item">Chroma</span><span class="kp-item">Milvus</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>Prompt工程</td><td><div class="kp-list"><span class="kp-item">提示词设计</span><span class="kp-item">Few-shot</span><span class="kp-item">CoT思维链</span><span class="kp-item">格式约束</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>Function Calling</td><td><div class="kp-list"><span class="kp-item">工具调用协议</span><span class="kp-item">JSON Schema</span><span class="kp-item">结构化输出</span><span class="kp-item">多工具编排</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>GraphRAG</td><td><div class="kp-list"><span class="kp-item">知识图谱</span><span class="kp-item">实体/关系抽取</span><span class="kp-item">社区检测</span><span class="kp-item">全局检索</span><span class="kp-item">Neo4j</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>模型评估</td><td><div class="kp-list"><span class="kp-item">Perplexity</span><span class="kp-item">BLEU</span><span class="kp-item">ROUGE</span><span class="kp-item">人工评估</span><span class="kp-item">LLM-as-Judge</span></div></td><td><span class="priority-mid">重要</span></td><td>理论+实操</td></tr>
+<tr data-stage="s6"><td><span class="tag tag-eng">工程</span></td><td>低代码平台</td><td><div class="kp-list"><span class="kp-item">Dify</span><span class="kp-item">Coze</span><span class="kp-item">FastGPT</span><span class="kp-item">可视化编排</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<!-- 阶段七：Agent -->
+<tr data-stage="s7"><td><span class="tag tag-agent">Agent</span></td><td>框架</td><td><div class="kp-list"><span class="kp-item">LangChain</span><span class="kp-item">LlamaIndex</span></div></td><td><span class="priority-high">核心</span></td><td>理论+实操</td></tr>
+<tr data-stage="s7"><td><span class="tag tag-agent">Agent</span></td><td>核心组件</td><td><div class="kp-list"><span class="kp-item">Chain</span><span class="kp-item">Memory</span><span class="kp-item">Tool</span><span class="kp-item">Loader</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s7"><td><span class="tag tag-agent">Agent</span></td><td>ReAct</td><td><div class="kp-list"><span class="kp-item">推理循环</span><span class="kp-item">工具调用</span><span class="kp-item">联网查询</span><span class="kp-item">文档读取</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s7"><td><span class="tag tag-agent">Agent</span></td><td>LangGraph</td><td><div class="kp-list"><span class="kp-item">状态图State</span><span class="kp-item">节点Node</span><span class="kp-item">条件边</span><span class="kp-item">循环</span><span class="kp-item">Human-in-the-loop</span><span class="kp-item">持久化</span><span class="kp-item">子图</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s7"><td><span class="tag tag-agent">Agent</span></td><td>多Agent系统</td><td><div class="kp-list"><span class="kp-item">CrewAI</span><span class="kp-item">MetaGPT</span><span class="kp-item">AutoGen</span><span class="kp-item">角色协作</span><span class="kp-item">消息路由</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<tr data-stage="s7"><td><span class="tag tag-agent">Agent</span></td><td>Coding Agent</td><td><div class="kp-list"><span class="kp-item">代码生成</span><span class="kp-item">自动调试</span><span class="kp-item">文件系统操作</span><span class="kp-item">终端执行</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<!-- 阶段八：微调部署 -->
+<tr data-stage="s8"><td><span class="tag tag-finetune">微调</span></td><td>PEFT</td><td><div class="kp-list"><span class="kp-item">LoRA</span><span class="kp-item">QLoRA</span><span class="kp-item">Adapter Tuning</span><span class="kp-item">Prefix Tuning</span><span class="kp-item">Prompt Tuning</span></div></td><td><span class="priority-high">核心</span></td><td>理论+实操</td></tr>
+<tr data-stage="s8"><td><span class="tag tag-finetune">微调</span></td><td>量化技术</td><td><div class="kp-list"><span class="kp-item">GPTQ</span><span class="kp-item">AWQ</span><span class="kp-item">GGUF</span><span class="kp-item">INT4/INT8</span><span class="kp-item">NF4</span><span class="kp-item">双重量化</span></div></td><td><span class="priority-high">核心</span></td><td>理论+实操</td></tr>
+<tr data-stage="s8"><td><span class="tag tag-finetune">微调</span></td><td>部署框架</td><td><div class="kp-list"><span class="kp-item">vLLM</span><span class="kp-item">Ollama</span><span class="kp-item">Docker</span><span class="kp-item">PagedAttention</span><span class="kp-item">连续批处理</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s8"><td><span class="tag tag-finetune">微调</span></td><td>对齐技术</td><td><div class="kp-list"><span class="kp-item">RLHF</span><span class="kp-item">DPO</span><span class="kp-item">PPO</span><span class="kp-item">奖励模型</span><span class="kp-item">偏好数据</span></div></td><td><span class="priority-mid">重要</span></td><td>理论+实操</td></tr>
+<tr data-stage="s8"><td><span class="tag tag-finetune">微调</span></td><td>API服务化</td><td><div class="kp-list"><span class="kp-item">FastAPI</span><span class="kp-item">流式输出</span><span class="kp-item">异步推理</span><span class="kp-item">批量推理</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<tr data-stage="s8"><td><span class="tag tag-finetune">微调</span></td><td>分布式训练</td><td><div class="kp-list"><span class="kp-item">DeepSpeed</span><span class="kp-item">数据并行</span><span class="kp-item">模型并行</span><span class="kp-item">ZeRO优化</span></div></td><td><span class="priority-low">了解</span></td><td>理论</td></tr>
+<!-- 阶段九：多模态 -->
+<tr data-stage="s9"><td><span class="tag tag-multimodal">多模态</span></td><td>视觉基础</td><td><div class="kp-list"><span class="kp-item">CLIP</span><span class="kp-item">ViT</span><span class="kp-item">SigLIP</span><span class="kp-item">视觉编码器</span><span class="kp-item">对比学习</span></div></td><td><span class="priority-high">核心</span></td><td>理论</td></tr>
+<tr data-stage="s9"><td><span class="tag tag-multimodal">多模态</span></td><td>多模态模型</td><td><div class="kp-list"><span class="kp-item">LLaVA</span><span class="kp-item">Qwen-VL</span><span class="kp-item">InternVL</span><span class="kp-item">图文理解</span><span class="kp-item">OCR</span><span class="kp-item">VQA</span></div></td><td><span class="priority-high">核心</span></td><td>实操</td></tr>
+<tr data-stage="s9"><td><span class="tag tag-multimodal">多模态</span></td><td>图像生成</td><td><div class="kp-list"><span class="kp-item">Stable Diffusion</span><span class="kp-item">扩散模型</span><span class="kp-item">ControlNet</span><span class="kp-item">LoRA风格微调</span><span class="kp-item">FLUX</span></div></td><td><span class="priority-mid">重要</span></td><td>实操</td></tr>
+<tr data-stage="s9"><td><span class="tag tag-multimodal">多模态</span></td><td>视频生成</td><td><div class="kp-list"><span class="kp-item">DiT架构</span><span class="kp-item">CogVideoX</span><span class="kp-item">时序一致性</span><span class="kp-item">文生视频</span></div></td><td><span class="priority-low">了解</span></td><td>理论</td></tr>
+<tr data-stage="s9"><td><span class="tag tag-multimodal">多模态</span></td><td>语音多模态</td><td><div class="kp-list"><span class="kp-item">Whisper</span><span class="kp-item">语音识别ASR</span><span class="kp-item">TTS语音合成</span><span class="kp-item">语音对话</span></div></td><td><span class="priority-low">了解</span></td><td>理论+实操</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ========== Tab 3: 学习资源（带来源筛选） ========== -->
+<div id="resources" class="tab-content">
+<div class="card">
+<div class="card-title"><div class="icon" style="background:#1565c020">🎬</div>全平台学习资源推荐</div>
+<div class="source-filter">
+<label>📡 课程来源：</label>
+<select id="sourceFilter" onchange="filterResources()">
+<option value="all">🌐 全部资源</option>
+<option value="bilibili">📺 B站资源</option>
+<option value="youtube">▶️ YouTube资源</option>
+<option value="mooc">🎓 海外公开课</option>
+</select>
+<span class="source-count" id="resourceCount"></span>
+</div>
+<div class="table-wrap">
+<table id="resourceTable">
+<thead><tr><th>阶段</th><th>资源名称</th><th>UP主/来源</th><th>搜索关键词/链接</th><th>覆盖内容</th><th>推荐度</th></tr></thead>
+<tbody>
+<!-- ===== 阶段一：数学基础 ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-math">数学</span></td><td>线性代数的本质 <span class="source-badge source-bilibili">B站</span></td><td>3Blue1Brown</td><td><code>线性代数的本质 合集</code></td><td>向量、矩阵运算、特征值、范数几何含义</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-math">数学</span></td><td>微积分的本质 <span class="source-badge source-bilibili">B站</span></td><td>3Blue1Brown</td><td><code>微积分的本质 合集</code></td><td>梯度可视化、微分几何直觉</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-math">数学</span></td><td>线性代数/高数/概率论 <span class="source-badge source-bilibili">B站</span></td><td>宋浩老师</td><td><code>宋浩 线性代数/高等数学/概率论</code></td><td>系统推导、范数、偏导、分布</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-math">数学</span></td><td>机器学习专用数学 <span class="source-badge source-bilibili">B站</span></td><td>苏德矿</td><td><code>苏德矿 机器学习专用数学精简课</code></td><td>ML数学精简版</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-math">数学</span></td><td>Essence of Linear Algebra <span class="source-badge source-youtube">YT</span></td><td>3Blue1Brown</td><td><code>3Blue1Brown Essence of Linear Algebra</code></td><td>向量空间、线性变换、特征值几何直觉</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-math">数学</span></td><td>MIT 18.06 Linear Algebra <span class="source-badge source-mooc">MIT</span></td><td>Gilbert Strang</td><td><code>MIT OCW 18.06 Gilbert Strang Linear Algebra</code></td><td>完整线代课程，矩阵分解、最小二乘</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-math">数学</span></td><td>Khan Academy 线性代数 <span class="source-badge source-mooc">KA</span></td><td>Khan Academy</td><td><code>Khan Academy Linear Algebra</code></td><td>入门级线代，适合基础薄弱</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-math">数学</span></td><td>Harvard Stat 110 概率论 <span class="source-badge source-mooc">Harvard</span></td><td>Joe Blitzstein</td><td><code>Harvard Stat 110 Probability</code></td><td>概率论完整课程，贝叶斯、分布</td><td>⭐⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段二：机器学习 ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-ml">ML</span></td><td>动手学深度学习 <span class="source-badge source-bilibili">B站</span></td><td>李沐</td><td><code>动手学深度学习 B站完整247集</code></td><td>ML全流程+PyTorch实操</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-ml">ML</span></td><td>机器学习2025 <span class="source-badge source-bilibili">B站</span></td><td>李宏毅</td><td><code>李宏毅 机器学习2025</code></td><td>梯度下降、损失函数、泛化</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-ml">ML</span></td><td>Andrew Ng ML Specialization <span class="source-badge source-mooc">Coursera</span></td><td>Andrew Ng / Stanford</td><td><code>Coursera Machine Learning Specialization</code></td><td>ML三大核心：监督/非监督/推荐系统</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-ml">ML</span></td><td>Stanford CS229 <span class="source-badge source-mooc">Stanford</span></td><td>Andrew Ng</td><td><code>Stanford CS229 Machine Learning</code></td><td>数学推导严谨的ML课程</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-ml">ML</span></td><td>fast.ai Practical DL <span class="source-badge source-mooc">fast.ai</span></td><td>Jeremy Howard</td><td><code>fast.ai Practical Deep Learning for Coders</code></td><td>自顶向下实操，快速上手</td><td>⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段三：神经网络 ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-dl">DL</span></td><td>深度学习MLP <span class="source-badge source-bilibili">B站</span></td><td>李宏毅</td><td><code>李宏毅 深度学习 MLP反向传播</code></td><td>链式求导、激活函数对比</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-dl">DL</span></td><td>深度学习实战 <span class="source-badge source-bilibili">B站</span></td><td>借我两毛五</td><td><code>深度学习全套实战 PyTorch</code></td><td>MLP搭建、过拟合对策</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-dl">DL</span></td><td>Hugo Larochelle Neural Nets <span class="source-badge source-youtube">YT</span></td><td>Hugo Larochelle</td><td><code>Hugo Larochelle Neural Networks Course</code></td><td>完整神经网络课程，理论严谨</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-dl">DL</span></td><td>Andrew Ng DL Specialization <span class="source-badge source-mooc">Coursera</span></td><td>Andrew Ng / deeplearning.ai</td><td><code>Coursera Deep Learning Specialization</code></td><td>5门课系统学习DL</td><td>⭐⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段四：深度学习进阶 ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-dl">DL</span></td><td>CNN/ResNet <span class="source-badge source-bilibili">B站</span></td><td>李沐</td><td><code>动手学深度学习 CNN ResNet</code></td><td>卷积网络实战</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-dl">DL</span></td><td>LSTM/GRU <span class="source-badge source-bilibili">B站</span></td><td>李沐</td><td><code>动手学深度学习 LSTM GRU</code></td><td>循环网络实战</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-dl">DL</span></td><td>LSTM文本分类 <span class="source-badge source-bilibili">B站</span></td><td>黑马程序员</td><td><code>PyTorch LSTM文本分类实战</code></td><td>RNN梯度消失、NLP实战</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-dl">DL</span></td><td>Stanford CS231n CNN <span class="source-badge source-mooc">Stanford</span></td><td>Fei-Fei Li / Justin Johnson</td><td><code>Stanford CS231n Convolutional Neural Networks</code></td><td>CV圣经级课程</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-dl">DL</span></td><td>Stanford CS224n NLP <span class="source-badge source-mooc">Stanford</span></td><td>Chris Manning</td><td><code>Stanford CS224n NLP with Deep Learning</code></td><td>NLP深度学习经典课程</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-dl">DL</span></td><td>Oxford Deep Learning <span class="source-badge source-youtube">YT</span></td><td>Nando de Freitas</td><td><code>Oxford Deep Learning by Nando de Freitas</code></td><td>贝叶斯DL、生成模型</td><td>⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段五：Transformer ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-nlp">NLP</span></td><td>Transformer讲解 <span class="source-badge source-bilibili">B站</span></td><td>李宏毅</td><td><code>李宏毅 Transformer 完整讲解</code></td><td>论文拆解、位置编码、多头注意力</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-nlp">NLP</span></td><td>Transformer大白话 <span class="source-badge source-bilibili">B站</span></td><td>五道口纳什</td><td><code>Transformer底层原理大白话讲解</code></td><td>通俗理解</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-nlp">NLP</span></td><td>HuggingFace实战 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>Hugging Face完整实战教程 PyTorch</code></td><td>Transformers库、BERT/GPT微调</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-nlp">NLP</span></td><td>CS25 Transformers United <span class="source-badge source-youtube">YT</span></td><td>Stanford</td><td><code>Stanford CS25 Transformers United</code></td><td>Transformer在各领域的应用</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-nlp">NLP</span></td><td>"Let's build GPT" <span class="source-badge source-youtube">YT</span></td><td>Karpathy</td><td><code>Karpathy Let's build GPT from scratch</code></td><td>从零构建GPT，逐行代码</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-nlp">NLP</span></td><td>HuggingFace NLP Course <span class="source-badge source-mooc">HF</span></td><td>HuggingFace</td><td><code>HuggingFace NLP Course free</code></td><td>官方免费NLP课程</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-nlp">NLP</span></td><td>Generative AI with LLMs <span class="source-badge source-mooc">Coursera</span></td><td>DeepLearning.AI</td><td><code>Coursera Generative AI with LLMs</code></td><td>LLM全生命周期：训练/微调/RLHF/部署</td><td>⭐⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段六：工程扩展 ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>RAG完整项目 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LangChain RAG完整项目 Milvus向量库</code></td><td>RAG全链路</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>MoE详解 <span class="source-badge source-bilibili">B站</span></td><td>五道口纳什</td><td><code>五道口纳什 MoE混合专家模型详解</code></td><td>混合专家原理</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>Prompt工程 <span class="source-badge source-bilibili">B站</span></td><td>李宏毅</td><td><code>李宏毅 大模型Prompt Engineering</code></td><td>Few-shot、CoT、格式约束</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>Function Calling <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>OpenAI Function Calling 工具调用实战教程</code></td><td>工具Schema、结构化输出</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>GraphRAG <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>微软GraphRAG 知识图谱增强RAG教程</code></td><td>图谱构建、社区检测</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>Dify平台 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>Dify 开源AI应用平台完整部署教程</code></td><td>可视化Workflow、RAG编排</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>Coze平台 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>Coze扣子 AI Bot搭建 从零到一</code></td><td>Bot创建、插件、知识库</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-eng">工程</span></td><td>模型评估 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LLM大模型评估方法 Perplexity BLEU ROUGE</code></td><td>自动指标、人工评估</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-eng">工程</span></td><td>RAG Course <span class="source-badge source-mooc">Coursera</span></td><td>DeepLearning.AI</td><td><code>Coursera Building RAG Agents with LLMs</code></td><td>RAG工程化实践</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-eng">工程</span></td><td>Full Stack LLM Bootcamp <span class="source-badge source-youtube">YT</span></td><td>Full Stack Deep Learning</td><td><code>Full Stack LLM Bootcamp 2024</code></td><td>LLM应用全栈开发</td><td>⭐⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段七：Agent ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-agent">Agent</span></td><td>LangChain实战 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LangChain v1全栈6小时实战教程</code></td><td>Chain、记忆、工具、智能体架构</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-agent">Agent</span></td><td>ReAct Agent <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>从零构建ReAct智能体 LangChain Ollama</code></td><td>推理循环、工具调用Demo</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-agent">Agent</span></td><td>LlamaIndex入门 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LlamaIndex入门完整教程</code></td><td>对比学习</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-agent">Agent</span></td><td>LangGraph <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LangGraph 有状态Agent工作流 完整教程</code></td><td>状态图、条件分支、Human-in-the-loop</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-agent">Agent</span></td><td>CrewAI <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>CrewAI 多Agent协作框架 入门到实战</code></td><td>角色定义、任务编排</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-agent">Agent</span></td><td>AutoGen <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>AutoGen 微软多Agent对话框架 教程</code></td><td>GroupChat、Agent间对话</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-agent">Agent</span></td><td>crewAI Course <span class="source-badge source-mooc">Coursera</span></td><td>DeepLearning.AI</td><td><code>Coursera AI Agents in LangGraph / crewAI</code></td><td>多Agent协作官方课程</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-agent">Agent</span></td><td>LangGraph官方教程 <span class="source-badge source-youtube">YT</span></td><td>LangChain</td><td><code>LangGraph official tutorial playlist</code></td><td>官方有状态Agent工作流</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-agent">Agent</span></td><td>Karpathy Coding Agent <span class="source-badge source-youtube">YT</span></td><td>Karpathy</td><td><code>Karpathy Coding Agent / Building AI agents</code></td><td>构建Coding Agent实践</td><td>⭐⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段八：微调部署 ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-finetune">微调</span></td><td>LoRA微调 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LoRA QLoRA 大模型微调 完整实战教程</code></td><td>低秩微调、Unsloth实操</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-finetune">微调</span></td><td>LLaMA-Factory <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LLaMA-Factory 一站式微调 从零到部署</code></td><td>WebUI训练、多模型支持</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-finetune">微调</span></td><td>模型量化 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>大模型量化 GPTQ AWQ GGUF 完整教程</code></td><td>量化原理、精度对比</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-finetune">微调</span></td><td>vLLM部署 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>vLLM 高性能推理引擎 部署教程</code></td><td>PagedAttention、生产部署</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-finetune">微调</span></td><td>Ollama <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>Ollama 本地部署大模型 零基础教程</code></td><td>一键运行、模型管理</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-finetune">微调</span></td><td>DPO对齐 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>DPO RLHF 大模型对齐技术 原理与实战</code></td><td>偏好优化、TRL库</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-finetune">微调</span></td><td>FastAPI服务 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>FastAPI 部署大模型推理 API服务</code></td><td>流式输出、Docker部署</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-finetune">微调</span></td><td>Finetuning Course <span class="source-badge source-mooc">Coursera</span></td><td>DeepLearning.AI</td><td><code>Coursera Finetuning Large Language Models</code></td><td>微调全流程官方课程</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-finetune">微调</span></td><td>HuggingFace PEFT <span class="source-badge source-youtube">YT</span></td><td>HuggingFace</td><td><code>HuggingFace PEFT LoRA tutorial</code></td><td>PEFT官方教程</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-finetune">微调</span></td><td>Full Stack DL <span class="source-badge source-youtube">YT</span></td><td>Full Stack Deep Learning</td><td><code>Full Stack Deep Learning course</code></td><td>DL工程化全栈</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-finetune">微调</span></td><td>MLOps Zoomcamp <span class="source-badge source-youtube">YT</span></td><td>DataTalks.Club</td><td><code>MLOps Zoomcamp course</code></td><td>MLOps部署运维</td><td>⭐⭐⭐⭐</td></tr>
+
+<!-- ===== 阶段九：多模态 ===== -->
+<tr data-source="bilibili"><td><span class="tag tag-multimodal">多模态</span></td><td>CLIP原理 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>CLIP 对比学习 图文匹配 原理详解</code></td><td>对比学习、零样本分类</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-multimodal">多模态</span></td><td>Vision Transformer <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>Vision Transformer ViT 完整讲解</code></td><td>图像Patch化、视觉Transformer</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-multimodal">多模态</span></td><td>LLaVA <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>LLaVA 多模态大模型 原理与部署</code></td><td>图文对话架构</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-multimodal">多模态</span></td><td>Qwen-VL <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>Qwen-VL 通义千问视觉模型 实战教程</code></td><td>图文理解、OCR</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-multimodal">多模态</span></td><td>Stable Diffusion <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>Stable Diffusion 扩散模型 原理与实战</code></td><td>去噪过程、ControlNet</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-multimodal">多模态</span></td><td>ComfyUI <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>ComfyUI Stable Diffusion 工作流教程</code></td><td>可视化生图工作流</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="bilibili"><td><span class="tag tag-multimodal">多模态</span></td><td>视频生成 <span class="source-badge source-bilibili">B站</span></td><td>-</td><td><code>AI视频生成 CogVideoX Sora架构 原理</code></td><td>DiT架构、文生视频</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-multimodal">多模态</span></td><td>Multimodal Course <span class="source-badge source-mooc">Coursera</span></td><td>DeepLearning.AI</td><td><code>Coursera Multimodal Retrieval Augmented Generation</code></td><td>多模态RAG官方课程</td><td>⭐⭐⭐⭐</td></tr>
+<tr data-source="mooc"><td><span class="tag tag-multimodal">多模态</span></td><td>Stanford CS231n多模态 <span class="source-badge source-mooc">Stanford</span></td><td>Fei-Fei Li</td><td><code>Stanford CS231n 视觉与语言</code></td><td>视觉语言模型前沿</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr data-source="youtube"><td><span class="tag tag-multimodal">多模态</span></td><td>Yannic Kilcher 论文解读 <span class="source-badge source-youtube">YT</span></td><td>Yannic Kilcher</td><td><code>Yannic Kilcher multimodal CLIP ViT</code></td><td>多模态前沿论文精读</td><td>⭐⭐⭐⭐⭐</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ========== Tab 4: 技术栈 ========== -->
+<div id="tools" class="tab-content">
+<div class="card">
+<div class="card-title"><div class="icon" style="background:#ee4c2c20">🛠️</div>统一技术栈</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>工具</th><th>用途</th><th>适用阶段</th><th>学习优先级</th></tr></thead>
+<tbody>
+<tr><td><span class="tool-badge"><span class="dot dot-python"></span>Python</span></td><td>编程语言基础，全部教程统一语言</td><td>全阶段</td><td><span class="priority-high">最高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-numpy"></span>NumPy</span></td><td>矩阵运算、数学计算、向量化操作</td><td>阶段一~三</td><td><span class="priority-high">最高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-pandas"></span>Pandas</span></td><td>数据处理、特征工程、数据清洗</td><td>阶段二~四</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-pytorch"></span>PyTorch</span></td><td>深度学习框架，模型搭建与训练</td><td>阶段三~九</td><td><span class="priority-high">最高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-hf"></span>HuggingFace</span></td><td>预训练模型生态：Transformers/PEFT/TRL</td><td>阶段五~九</td><td><span class="priority-high">最高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-langchain"></span>LangChain</span></td><td>Agent/Chain/RAG开发框架</td><td>阶段六~七</td><td><span class="priority-high">最高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-langchain"></span>LangGraph</span></td><td>有状态Agent工作流编排框架</td><td>阶段七</td><td><span class="priority-high">最高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-crewai"></span>CrewAI</span></td><td>多Agent角色协作框架</td><td>阶段七</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge">MetaGPT</span></td><td>多Agent软件工程协作框架</td><td>阶段七</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge">AutoGen</span></td><td>微软多Agent对话框架</td><td>阶段七</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge">Scikit-learn</span></td><td>传统ML算法实现与评估</td><td>阶段二</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge">FAISS</span></td><td>向量检索库</td><td>阶段六</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge">Milvus</span></td><td>分布式向量数据库</td><td>阶段六</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-neo4j"></span>Neo4j</span></td><td>图数据库（GraphRAG）</td><td>阶段六</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-dify"></span>Dify</span></td><td>开源AI应用开发平台</td><td>阶段六</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge">Coze</span></td><td>字节AI Bot搭建平台</td><td>阶段六</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge">FastGPT</span></td><td>开源知识库问答系统</td><td>阶段六</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge">LlamaIndex</span></td><td>数据索引与检索框架</td><td>阶段七</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-unsloth"></span>Unsloth</span></td><td>微调加速库（2x加速+70%显存优化）</td><td>阶段八</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge">LLaMA-Factory</span></td><td>一站式微调训练框架</td><td>阶段八</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-vllm"></span>vLLM</span></td><td>高性能LLM推理引擎</td><td>阶段八</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-ollama"></span>Ollama</span></td><td>本地一键运行开源模型</td><td>阶段八</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-docker"></span>Docker</span></td><td>模型服务容器化部署</td><td>阶段八</td><td><span class="priority-mid">高</span></td></tr>
+<tr><td><span class="tool-badge">FastAPI</span></td><td>模型推理API服务化</td><td>阶段八</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge">DeepSpeed</span></td><td>分布式训练框架</td><td>阶段八</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge"><span class="dot dot-comfyui"></span>ComfyUI</span></td><td>可视化AI生图工作流</td><td>阶段九</td><td><span class="priority-low">中</span></td></tr>
+<tr><td><span class="tool-badge">Whisper</span></td><td>OpenAI语音识别模型</td><td>阶段九</td><td><span class="priority-low">中</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ========== Tab 5: 阶段项目 ========== -->
+<div id="projects" class="tab-content">
+<div class="card">
+<div class="card-title"><div class="icon" style="background:#2e7d3220">🎯</div>每阶段验收项目</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>阶段</th><th>项目名称</th><th>核心技能</th><th>交付物</th><th>难度</th></tr></thead>
+<tbody>
+<tr><td><span class="tag tag-math">一 数学</span></td><td>NumPy数学手算集</td><td>矩阵运算、梯度计算、概率采样</td><td>Jupyter Notebook</td><td>⭐⭐</td></tr>
+<tr><td><span class="tag tag-ml">二 ML</span></td><td>分类/回归端到端项目</td><td>sklearn、数据预处理、模型评估</td><td>完整Pipeline + 评估报告</td><td>⭐⭐⭐</td></tr>
+<tr><td><span class="tag tag-dl">三 DL入门</span></td><td>MLP手写数字识别</td><td>PyTorch搭建、反向传播、过拟合对策</td><td>训练脚本 + 模型文件</td><td>⭐⭐⭐</td></tr>
+<tr><td><span class="tag tag-dl">四 DL进阶</span></td><td>图像分类 or 文本分类</td><td>CNN/LSTM、数据增强、训练调优</td><td>完整项目 + 精度报告</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td><span class="tag tag-nlp">五 NLP</span></td><td>BERT/GPT微调项目</td><td>HuggingFace、模型加载、微调、评估</td><td>微调模型 + 推理Demo</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td><span class="tag tag-eng">六 工程</span></td><td>RAG知识库问答 + 低代码平台应用</td><td>文档切片、向量化、Function Calling、GraphRAG、Dify/Coze</td><td>可运行Web应用 + 平台Bot</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td><span class="tag tag-agent">七 Agent</span></td><td>LangGraph有状态Agent + 多Agent系统</td><td>LangGraph状态图、条件分支、CrewAI/AutoGen多角色协作</td><td>Agent工作流 + 多Agent协作Demo</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td><span class="tag tag-finetune">八 微调</span></td><td>微调专属模型 + 本地部署</td><td>QLoRA微调、GPTQ/AWQ量化、vLLM/Ollama部署、FastAPI服务化</td><td>微调模型 + 量化版本 + API服务</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td><span class="tag tag-multimodal">九 多模态</span></td><td>多模态应用Demo</td><td>LLaVA/Qwen-VL图文理解、Stable Diffusion图像生成、ComfyUI工作流</td><td>图文理解Web应用 or 可控生图系统</td><td>⭐⭐⭐⭐⭐</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ========== Tab 6: 时间规划 ========== -->
+<div id="timeline" class="tab-content">
+<div class="card">
+<div class="card-title"><div class="icon" style="background:#7b1fa220">📅</div>36-54周学习规划</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>周次</th><th>阶段</th><th>主题</th><th>里程碑</th><th>每日建议时长</th></tr></thead>
+<tbody>
+<tr><td>第1-6周</td><td>一</td><td><span class="tag tag-math">数学基础</span></td><td>✅ 看懂所有ML公式推导</td><td>2-3h</td></tr>
+<tr><td>第7-12周</td><td>二</td><td><span class="tag tag-ml">机器学习基础</span></td><td>✅ 独立完成分类/回归项目</td><td>2-3h</td></tr>
+<tr><td>第13-16周</td><td>三</td><td><span class="tag tag-dl">神经网络入门</span></td><td>✅ MLP从零搭建 + 手写反向传播</td><td>2-3h</td></tr>
+<tr><td>第17-22周</td><td>四</td><td><span class="tag tag-dl">深度学习进阶</span></td><td>✅ CNN图像分类 or LSTM文本分类</td><td>3h</td></tr>
+<tr><td>第23-28周</td><td>五</td><td><span class="tag tag-nlp">Transformer & 预训练</span></td><td>✅ BERT/GPT微调项目完成</td><td>3h</td></tr>
+<tr><td>第29-34周</td><td>六</td><td><span class="tag tag-eng">大模型工程扩展</span></td><td>✅ RAG系统 + Function Calling + 低代码平台</td><td>3h</td></tr>
+<tr><td>第35-40周</td><td>七</td><td><span class="tag tag-agent">Agent智能体</span></td><td>✅ LangGraph有状态Agent + 多Agent协作</td><td>3-4h</td></tr>
+<tr><td>第41-46周</td><td>八</td><td><span class="tag tag-finetune">微调与部署</span></td><td>✅ LoRA微调 + 量化 + vLLM/Ollama部署</td><td>3-4h</td></tr>
+<tr><td>第47-54周</td><td>九</td><td><span class="tag tag-multimodal">多模态大模型</span></td><td>✅ 多模态理解/图像生成系统</td><td>3-4h</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function filterKnowledge() {
+  var val = document.getElementById('stageFilter').value;
+  document.querySelectorAll('#knowledgeTable tbody tr').forEach(function(tr) {
+    tr.style.display = (val === 'all' || tr.dataset.stage === val) ? '' : 'none';
+  });
+}
+
+function filterResources() {
+  var val = document.getElementById('sourceFilter').value;
+  var count = 0;
+  document.querySelectorAll('#resourceTable tbody tr').forEach(function(tr) {
+    if (val === 'all' || tr.dataset.source === val) {
+      tr.style.display = '';
+      count++;
+    } else {
+      tr.style.display = 'none';
+    }
+  });
+  document.getElementById('resourceCount').textContent = '显示 ' + count + ' 条资源';
+}
+
+// 主题切换逻辑
+(function() {
+  var html = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  var saved = localStorage.getItem('ai-route-theme');
+
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = '☀️';
+    } else {
+      html.removeAttribute('data-theme');
+      btn.textContent = '🌙';
+    }
+  }
+
+  if (saved) { applyTheme(saved); }
+
+  btn.addEventListener('click', function() {
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      html.removeAttribute('data-theme');
+      btn.textContent = '🌙';
+      localStorage.setItem('ai-route-theme', 'light');
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = '☀️';
+      localStorage.setItem('ai-route-theme', 'dark');
+    }
+  });
+})();
+
+// Init resource count
+(function() {
+  var total = document.querySelectorAll('#resourceTable tbody tr').length;
+  document.getElementById('resourceCount').textContent = '共 ' + total + ' 条资源';
+})();
+</script>
+</body>
+</html>
