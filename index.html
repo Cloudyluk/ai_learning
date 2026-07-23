@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 学习路线</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#0a0a1a 0%,#1a1a2e 50%,#16213e 100%);color:#e0e0e0;padding:20px}
+.container{max-width:800px;width:100%;text-align:center}
+h1{font-size:2.5rem;margin-bottom:12px;background:linear-gradient(135deg,#42a5f5,#ab47bc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:#888;font-size:1.1rem;margin-bottom:48px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px 24px;text-decoration:none;color:#e0e0e0;transition:all .3s ease;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-6px);border-color:rgba(66,165,245,0.5);box-shadow:0 12px 40px rgba(66,165,245,0.15)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#42a5f5,#ab47bc);opacity:0;transition:opacity .3s}
+.card:hover::before{opacity:1}
+.card-icon{font-size:3rem;margin-bottom:16px}
+.card-title{font-size:1.3rem;font-weight:600;margin-bottom:8px}
+.card-desc{color:#999;font-size:.9rem;line-height:1.6}
+footer{margin-top:48px;color:#555;font-size:.85rem}
+@media(max-width:600px){h1{font-size:1.8rem}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🚀 AI 学习路线</h1>
+<p class="subtitle">从零基础到实战部署，9 阶段系统化学习路径</p>
+<div class="cards">
+<a class="card" href="ai-learning-table.html">
+<div class="card-icon">📊</div>
+<div class="card-title">多维表格</div>
+<div class="card-desc">交互式学习路线表格，支持阶段筛选、资源搜索、多端适配，含 B站/YouTube/公开课资源</div>
+</a>
+<a class="card" href="ai-learning-cockpit.html">
+<div class="card-icon">🎯</div>
+<div class="card-title">学习驾驶舱</div>
+<div class="card-desc">可视化学习 Dashboard，跟踪 9 阶段 80+ 知识点进度，支持学习记录、薄弱点分析、图表统计</div>
+</a>
+</div>
+<footer>© 2026 AI Learning Roadmap</footer>
+</div>
+</body>
+</html>
